@@ -1,0 +1,82 @@
+/PREP7
+
+ET,1,188
+
+SECTYPE,1,BEAM,RECT,,3
+SECDATA,.2,.4,3,3
+
+MP,EX,,2E11
+MP,PRXY,,.3
+MP,DENS,,7850
+
+K,1
+K,2,3
+K,3,,.5
+L,1,2
+
+LATT,1,,1,,3,,1
+LESIZE,ALL,,,30
+LMESH,ALL
+
+D,NODE(0,0,0),ALL
+
+/SOLU
+ANTYPE,MODAL
+MODOPT,LANB,30
+MXPAND,30,,,1,,1
+
+SOLVE
+
+
+/SOLU
+ANTYPE,TRANS
+TRNOPT, MSUP, 30,  , , , YES,
+TIMINT,ON
+DELTIM,.005
+OUTRES,ERASE
+OUTRES,ALL,ALL
+OUTRES,NSOL,ALL
+OUTRES,A,ALL
+*DIM,CARGA,TABLE,3,,,TIME
+t1 = 0.1
+t2 = 10
+
+f1 = -10e3
+f2 = -10e3
+*taxis,CARGA(1),1,0,t1,t2
+carga(1) = 0,f1,f2
+
+f,NODE(4,0,0),fy,%carga%
+allsel
+
+DampingRatio=0.03
+DMPRAT, DampingRatio
+
+
+timint,1
+outres,all,all
+time,t1
+DELTIM,.05
+lswrite,1
+
+timint,1
+outres,all,all
+time,t2
+lswrite,2
+
+lssolve,1,2
+
+
+
+
+/POST26
+
+/SOLU
+EXPASS,ON
+NUMEXP,ALL
+OUTRES,ERASE
+OUTRES,ALL,ALL
+OUTRES,NSOL,ALL
+OUTRES,A,ALL
+SOLVE
+FINISH
